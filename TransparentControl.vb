@@ -247,7 +247,8 @@ Public Class TransparentControl
     Protected Overrides ReadOnly Property CreateParams As CreateParams
         Get
             Dim cp As CreateParams = MyBase.CreateParams
-            Dim bDesignMode As Boolean = (System.ComponentModel.LicenseManager.UsageMode = System.ComponentModel.LicenseUsageMode.Designtime)
+            'Dim bDesignMode As Boolean = (System.ComponentModel.LicenseManager.UsageMode = System.ComponentModel.LicenseUsageMode.Designtime)
+            Dim bDesignMode = Me.DesignMode
             If Not bDesignMode Then
                 cp.ExStyle += WS_EX_LAYERED
             End If
