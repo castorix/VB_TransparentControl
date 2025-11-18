@@ -163,6 +163,18 @@ Public Class TransparentControl
     Public Shared Function SendMessage(hWnd As IntPtr, Msg As Integer, wParam As IntPtr, lParam As IntPtr) As Integer
     End Function
 
+    <DllImport("User32.dll", SetLastError:=True, CharSet:=CharSet.Unicode)>
+    Public Shared Function ScreenToClient(hWnd As IntPtr, ByRef lpPoint As System.Drawing.Point) As Boolean
+    End Function
+
+    <DllImport("User32.dll", SetLastError:=True, CharSet:=CharSet.Unicode)>
+    Public Shared Function ClientToScreen(hWnd As IntPtr, ByRef lpPoint As System.Drawing.Point) As Boolean
+    End Function
+
+    <DllImport("User32.dll", SetLastError:=True, CharSet:=CharSet.Unicode)>
+    Public Shared Function GetParent(hWnd As IntPtr) As IntPtr
+    End Function
+
     Public Sub New()
         MyBase.New()
         Me.BorderStyle = BorderStyle.FixedSingle
@@ -184,9 +196,13 @@ Public Class TransparentControl
 
         Dim rectWnd As RECT
         GetWindowRect(hWnd, rectWnd)
+        Dim ptClient As Drawing.Point
+        ptClient.X = rectWnd.left
+        ptClient.Y = rectWnd.top
+        ScreenToClient(GetParent(hWnd), ptClient)
 
         Dim ptSrc As System.Drawing.Point = New System.Drawing.Point()
-        Dim ptDest As System.Drawing.Point = New System.Drawing.Point(rectWnd.left, rectWnd.top)
+        Dim ptDest As System.Drawing.Point = New System.Drawing.Point(ptClient.X, ptClient.Y)
 
         Dim pptSrc = Marshal.AllocHGlobal(Marshal.SizeOf(GetType(System.Drawing.Point)))
         Marshal.StructureToPtr(ptSrc, pptSrc, False)
@@ -231,14 +247,10 @@ Public Class TransparentControl
     Protected Overrides ReadOnly Property CreateParams As CreateParams
         Get
             Dim cp As CreateParams = MyBase.CreateParams
-            'If (Not Site.DesignMode) Then
-            '    cp.ExStyle += WS_EX_LAYERED
-            'End If
-            'Dim bDesignMode As Boolean = (System.ComponentModel.LicenseManager.UsageMode = System.ComponentModel.LicenseUsageMode.Designtime)
-            'If (Not bDesignMode) Then
-            '    cp.ExStyle += WS_EX_LAYERED
-            'End If
-            If Not Me.DesignMode Then cp.ExStyle += WS_EX_LAYERED
+            Dim bDesignMode As Boolean = (System.ComponentModel.LicenseManager.UsageMode = System.ComponentModel.LicenseUsageMode.Designtime)
+            If Not bDesignMode Then
+                cp.ExStyle += WS_EX_LAYERED
+            End If
             Return cp
         End Get
     End Property

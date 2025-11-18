@@ -10,5 +10,9 @@
         TransparentControl2.SetBitmap(hBitmap2)
         Dim hBitmap3 As IntPtr = TransparentControl2.LoadImage("Soccer_Ball_256.png", System.Drawing.Color.FromArgb(0))
         TransparentControl3.SetBitmap(hBitmap3)
+
+        'TransparentControl1.Location = New Point(0, 0)
+        'TransparentControl2.Location = New Point(0, 0)
+        'TransparentControl3.Location = New Point(0, 0)
     End Sub
 End Class
